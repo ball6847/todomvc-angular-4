@@ -1,15 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-
-import { ApplicationState } from './app.state'
-import { Todo } from './todo';
-import {
-  TodoCreatedAction,
-  TodoDeletedAction,
-  TodoUpdatedAction
-} from './todo.action';
-
+import {Injectable} from '@angular/core';
+import {Todo} from './todo';
 
 @Injectable()
 export class TodoDataService {
@@ -19,41 +9,55 @@ export class TodoDataService {
   lastId: number = 0;
 
   // Placeholder for todo's
-  todos$: Observable<Todo[]>;
+  todos: Todo[] = [];
 
-  constructor(protected store: Store<ApplicationState>) {
-    this.todos$ = this.store.select('todos');
+  constructor() {
   }
 
   // Simulate POST /todos
-  addTodo(todo: Todo) {
+  addTodo(todo: Todo): TodoDataService {
     if (!todo.id) {
       todo.id = ++this.lastId;
     }
-
-    this.store.dispatch(
-      new TodoCreatedAction(todo)
-    );
+    this.todos.push(todo);
+    return this;
   }
 
   // Simulate DELETE /todos/:id
-  deleteTodo(todo: Todo) {
-    this.store.dispatch(
-      new TodoDeletedAction(todo)
-    );
+  deleteTodoById(id: number): TodoDataService {
+    this.todos = this.todos
+      .filter(todo => todo.id !== id);
+    return this;
+  }
+
+  // Simulate PUT /todos/:id
+  updateTodoById(id: number, values: Object = {}): Todo {
+    let todo = this.getTodoById(id);
+    if (!todo) {
+      return null;
+    }
+    Object.assign(todo, values);
+    return todo;
   }
 
   // Simulate GET /todos
-  getAllTodos(): Observable<Todo[]> {
-    return this.todos$;
+  getAllTodos(): Todo[] {
+    return this.todos;
+  }
+
+  // Simulate GET /todos/:id
+  getTodoById(id: number): Todo {
+    return this.todos
+      .filter(todo => todo.id === id)
+      .pop();
   }
 
   // Toggle todo complete
-  toggleTodoComplete(todo: Todo) {
-    const update = Object.assign({}, todo, { complete: !todo.complete });
-
-    this.store.dispatch(
-      new TodoUpdatedAction(update)
-    )
+  toggleTodoComplete(todo: Todo){
+    let updatedTodo = this.updateTodoById(todo.id, {
+      complete: !todo.complete
+    });
+    return updatedTodo;
   }
+
 }
