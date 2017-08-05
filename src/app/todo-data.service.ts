@@ -1,5 +1,15 @@
-import {Injectable} from '@angular/core';
-import {Todo} from './todo';
+import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
+
+import { ApplicationState } from './app.state'
+import { Todo } from './todo';
+import {
+  TodoCreatedAction,
+  TodoDeletedAction,
+  TodoUpdatedAction
+} from './todo.action';
+
 
 @Injectable()
 export class TodoDataService {
@@ -9,55 +19,41 @@ export class TodoDataService {
   lastId: number = 0;
 
   // Placeholder for todo's
-  todos: Todo[] = [];
+  todos$: Observable<Todo[]>;
 
-  constructor() {
+  constructor(protected store: Store<ApplicationState>) {
+    this.todos$ = this.store.select('todos');
   }
 
   // Simulate POST /todos
-  addTodo(todo: Todo): TodoDataService {
+  addTodo(todo: Todo) {
     if (!todo.id) {
       todo.id = ++this.lastId;
     }
-    this.todos.push(todo);
-    return this;
+
+    this.store.dispatch(
+      new TodoCreatedAction(todo)
+    );
   }
 
   // Simulate DELETE /todos/:id
-  deleteTodoById(id: number): TodoDataService {
-    this.todos = this.todos
-      .filter(todo => todo.id !== id);
-    return this;
-  }
-
-  // Simulate PUT /todos/:id
-  updateTodoById(id: number, values: Object = {}): Todo {
-    let todo = this.getTodoById(id);
-    if (!todo) {
-      return null;
-    }
-    Object.assign(todo, values);
-    return todo;
+  deleteTodo(todo: Todo) {
+    this.store.dispatch(
+      new TodoDeletedAction(todo)
+    );
   }
 
   // Simulate GET /todos
-  getAllTodos(): Todo[] {
-    return this.todos;
-  }
-
-  // Simulate GET /todos/:id
-  getTodoById(id: number): Todo {
-    return this.todos
-      .filter(todo => todo.id === id)
-      .pop();
+  getAllTodos(): Observable<Todo[]> {
+    return this.todos$;
   }
 
   // Toggle todo complete
-  toggleTodoComplete(todo: Todo){
-    let updatedTodo = this.updateTodoById(todo.id, {
-      complete: !todo.complete
-    });
-    return updatedTodo;
-  }
+  toggleTodoComplete(todo: Todo) {
+    const update = Object.assign({}, todo, { complete: !todo.complete });
 
+    this.store.dispatch(
+      new TodoUpdatedAction(update)
+    )
+  }
 }

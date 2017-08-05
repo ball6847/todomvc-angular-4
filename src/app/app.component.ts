@@ -1,4 +1,5 @@
-import {Component} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import {Todo} from './todo';
 import {TodoDataService} from './todo-data.service';
 
@@ -6,13 +7,19 @@ import {TodoDataService} from './todo-data.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [TodoDataService]
+  providers: [TodoDataService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   newTodo: Todo = new Todo();
+  todos$: Observable<Todo[]>;
 
   constructor(private todoDataService: TodoDataService) {
+  }
+
+  ngOnInit() {
+    this.todos$ = this.todoDataService.getAllTodos();
   }
 
   addTodo() {
@@ -25,11 +32,6 @@ export class AppComponent {
   }
 
   removeTodo(todo) {
-    this.todoDataService.deleteTodoById(todo.id);
+    this.todoDataService.deleteTodo(todo);
   }
-
-  get todos() {
-    return this.todoDataService.getAllTodos();
-  }
-
 }

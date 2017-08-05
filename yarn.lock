@@ -132,6 +132,10 @@
   dependencies:
     tsickle "^0.21.0"
 
+"@ngrx/store-devtools@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/store-devtools/-/store-devtools-4.0.0.tgz#b79c24773217df7fd9735ad21f9cbf2533c96e04"
+
 "@ngrx/store@^4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-4.0.2.tgz#bd0388f0444a78b87059738274a3d3b5cc43e402"
@@ -4692,6 +4696,10 @@ tar@^2.0.0, tar@^2.2.1:
     block-stream "*"
     fstream "^1.0.2"
     inherits "2"
+
+tassign@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/tassign/-/tassign-1.0.0.tgz#a768f9875a0fccc15f03d68b4ac02060415e479d"
 
 temp@0.8.3:
   version "0.8.3"
