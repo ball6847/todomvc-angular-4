@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/share';
 
 import { ApplicationState } from './app.state'
 import { Todo } from './todo';
@@ -45,7 +46,7 @@ export class TodoDataService {
 
   // Simulate GET /todos
   getAllTodos(): Observable<Todo[]> {
-    return this.todos$;
+    return this.todos$.share();
   }
 
   // Toggle todo complete
