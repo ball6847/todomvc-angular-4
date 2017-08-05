@@ -9,10 +9,10 @@ import {
 export function todoReducer(state: Todo[] = [], { type, payload }: TodoAction): Todo[] {
   switch (type) {
     case TODO_CREATED_ACTION:
-      return [...state, <Todo>payload];
+      return [...state, payload];
 
     case TODO_UPDATED_ACTION:
-      return state.map(todo => todo.id == payload.id ? <Todo>payload : todo);
+      return state.map(todo => todo.id == payload.id ? payload : todo);
 
     case TODO_DELETED_ACTION:
       return state.filter(todo => todo.id != payload.id);
